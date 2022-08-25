@@ -2,8 +2,7 @@ import React, { useState } from 'react';
 // @ts-ignore
 import * as pdfjs from 'pdfjs-dist/build/pdf';
 
-pdfjs.GlobalWorkerOptions.workerSrc =
-  '../node_modules/pdfjs-dist/build/pdf.worker.js';
+pdfjs.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.js';
 
 function App() {
   const [url, setUrl] = useState('');

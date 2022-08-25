@@ -4,8 +4,9 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc && vite build",
+    "dev": "npm run setup:worker && vite",
+    "build": "tsc && vite build && npm run setup:worker",
+    "setup:worker": "cp node_modules/pdfjs-dist/build/pdf.worker.min.js public",
     "preview": "vite preview"
   },
   "dependencies": {
