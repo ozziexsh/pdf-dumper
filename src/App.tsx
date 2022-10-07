@@ -162,7 +162,7 @@ function App() {
 
   return (
     <div className={'min-h-screen bg-blue-50 py-12'}>
-      <div className="space-y-8">
+      <div className="space-y-8 px-4">
         {!loading && !output ? (
           <form
             onSubmit={onSubmit}
@@ -261,7 +261,9 @@ function App() {
             </div>
 
             <div
-              className={'max-w-7xl mx-auto bg-white p-4 rounded-md shadow-md'}
+              className={
+                'max-w-7xl mx-auto bg-white p-4 rounded-md shadow-md overflow-auto'
+              }
             >
               <h2 className={'text-2xl font-medium mb-6'}>Inputs</h2>
 
