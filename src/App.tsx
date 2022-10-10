@@ -44,6 +44,8 @@ function InputObjTableRow({ input, i }: { input: InputObj; i: number }) {
                 {input.name}
               </button>
             </>
+          ) : input.xfaOn ? (
+            `toggle (${input.xfaOn})`
           ) : (
             input.name
           )}
