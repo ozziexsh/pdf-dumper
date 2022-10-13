@@ -25,6 +25,12 @@ interface XfaNode {
   children?: XfaNode[];
 }
 
+interface AcroNode {
+  type: string;
+  id: string;
+  name: string;
+}
+
 function InputObjTableRow({ input, i }: { input: InputObj; i: number }) {
   const [modal, setModal] = useState(false);
 
@@ -81,6 +87,7 @@ function App() {
   const [error, setError] = useState('');
   const [showOutput, setShowOutput] = useState(false);
   const [inputs, setInputs] = useState<InputObj[]>([]);
+  const [formType, setFormType] = useState('');
 
   function onFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.currentTarget.files?.[0];
@@ -114,13 +121,39 @@ function App() {
         enableXfa: true,
       }).promise;
 
-      setOutput(JSON.stringify(pdfDocument.allXfaHtml, null, 2));
-      setInputs(getAllInputs(pdfDocument.allXfaHtml));
+      if (pdfDocument.allXfaHtml) {
+        setFormType('xfa');
+        setInputs(getAllInputs(pdfDocument.allXfaHtml));
+        setOutput(JSON.stringify(pdfDocument.allXfaHtml, null, 2));
+      } else {
+        setFormType('acro');
+        setInputs(getAllAcroInputs(await pdfDocument.getFieldObjects()));
+        setOutput(JSON.stringify(await pdfDocument.getFieldObjects(), null, 2));
+      }
     } catch (e) {
+      console.error(e);
       setError('Could not load pdf, please check browser console');
     }
 
     setLoading(false);
+  }
+
+  function getAllAcroInputs(baseObj: { [name: string]: AcroNode[] }) {
+    const result: InputObj[] = [];
+    for (const key in baseObj) {
+      for (const node of baseObj[key]) {
+        if (!node.type) {
+          continue;
+        }
+        result.push({
+          name: node.type,
+          dataId: node.id,
+          ariaLabel: node.name,
+          options: [],
+        });
+      }
+    }
+    return result;
   }
 
   function getAllInputs(node: XfaNode) {
@@ -267,7 +300,9 @@ function App() {
                 'max-w-7xl mx-auto bg-white p-4 rounded-md shadow-md overflow-auto'
               }
             >
-              <h2 className={'text-2xl font-medium mb-6'}>Inputs</h2>
+              <h2 className={'text-2xl font-medium mb-6'}>
+                Inputs ({formType})
+              </h2>
 
               <table className="w-full divide-y divide-gray-300">
                 <thead className="bg-gray-50">
